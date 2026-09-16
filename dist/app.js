@@ -71,4 +71,4 @@ document.querySelector('.clear-city').addEventListener('click',()=>{const city=d
 document.getElementById('editBudget').addEventListener('click',()=>document.getElementById('budget').focus());
 document.getElementById('regenerate').addEventListener('click',()=>{seed += 2;renderMenu();updateBasket();showToast('Собрали новые варианты блюд')});
 document.getElementById('shoppingList').addEventListener('click',()=>showToast('Список покупок сохранён на этом устройстве'));
-renderMenu(); updateTolerance(); if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(()=>{});
+renderMenu(); updateTolerance(); if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
