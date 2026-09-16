@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#126b44" />
+    <meta name="description" content="Соберите недельное меню и список продуктов в рамках бюджета." />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
+    <title>Корзина недели — меню и покупки</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#top" aria-label="Корзина недели, на главную"><span class="brand-mark" aria-hidden="true">⌑</span><span>Корзина<br />недели</span></a>
+        <nav aria-label="Основная навигация"><a class="active" href="#planner">План питания</a><a href="#basket">Список покупок</a><a href="#how">Как это работает</a></nav>
+        <button class="avatar" type="button" aria-label="Профиль">Д</button>
+      </header>
+
+      <section class="hero" id="top">
+        <div><p class="eyebrow">Планирование покупок без лишнего</p><h1>Продукты на неделю —<br /><em>в рамках бюджета.</em></h1><p class="hero-copy">Настройте рацион, выберите магазин — и получите меню с готовым списком продуктов.</p></div>
+        <div class="hero-stat"><span>Ваш запас</span><strong id="heroRemaining">120 ₽</strong><small>после планирования</small></div>
+      </section>
+
+      <section class="controls card" id="planner" aria-label="Параметры корзины">
+        <div class="control-grid">
+          <label>Ваш город <span class="field"><span>⌖</span><input id="city" list="cities" value="Екатеринбург" aria-label="Поиск города" /><button class="clear-city" type="button" aria-label="Очистить поиск">×</button></span></label>
+          <datalist id="cities"><option value="Москва"></option><option value="Санкт-Петербург"></option><option value="Екатеринбург"></option><option value="Казань"></option><option value="Новосибирск"></option><option value="Краснодар"></option><option value="Владивосток"></option><option value="Пермь"></option></datalist>
+          <label>Магазин <span class="field"><span id="storeGlyph">П</span><select id="store" aria-label="Выберите магазин"><option>Пятёрочка</option><option>Магнит</option><option>Перекрёсток</option><option>Чижик</option><option>Светофор</option></select></span></label>
+          <label>Бюджет на неделю <span class="field budget-field"><span>₽</span><input id="budget" type="number" min="1000" step="500" value="6500" aria-label="Бюджет в рублях" /><button id="editBudget" type="button" aria-label="Изменить бюджет">⌁</button></span></label>
+        </div>
+        <div class="flex-row preferences"><span class="control-name">Особые пожелания</span><div class="chips" role="group" aria-label="Ограничения"><button class="chip selected" data-filter="nuts" type="button">⌧ Без орехов</button><button class="chip" data-filter="vegan" type="button">♧ Веган</button><button class="chip" data-filter="kids" type="button">☻ Для детей</button><button class="chip add-chip" type="button">＋ Добавить</button></div></div>
+        <div class="split-control">
+          <div><span class="control-name">Допустимое отклонение</span><p id="toleranceText">Строго в рамках бюджета</p></div>
+          <div class="range-wrap"><input id="tolerance" type="range" min="0" max="20" step="5" value="0" aria-label="Допустимое превышение бюджета" /><div class="range-labels"><span>Строго</span><span>+5%</span><span>+10%</span><span>+15%</span><span>+20%</span></div></div>
+        </div>
+      </section>
+
+      <section class="content-grid">
+        <section class="menu-panel card" aria-labelledby="menu-title"><div class="panel-head"><div><p class="eyebrow">14–20 апреля</p><h2 id="menu-title">План питания на неделю</h2></div><div class="head-actions"><button class="icon-button" type="button" aria-label="Предыдущая неделя">‹</button><button class="soft-button" id="regenerate" type="button">↻ Обновить меню</button><button class="icon-button" type="button" aria-label="Следующая неделя">›</button></div></div>
+          <div class="days" id="days" aria-live="polite"></div>
+          <div class="legend"><span><i class="dot breakfast"></i> Завтрак</span><span><i class="dot lunch"></i> Обед</span><span><i class="dot dinner"></i> Ужин</span><span><i class="dot snack"></i> Перекус</span><span class="menu-note">Нажмите на блюдо, чтобы заменить его</span></div>
+        </section>
+
+        <aside class="basket card" id="basket" aria-labelledby="basket-title"><div class="basket-head"><div><p class="eyebrow">Собрано по меню</p><h2 id="basket-title">Ваша корзина</h2></div><span class="counter" id="itemCounter">24 товара</span></div><div class="basket-list" id="basketList"></div><div class="total"><span>Итого</span><strong id="totalPrice">6 380 ₽</strong></div><div class="budget-message" id="budgetMessage"><span aria-hidden="true">♧</span><p><b>Вы уложились в бюджет!</b><br /><small id="remainingText">Осталось 120 ₽</small></p></div><button id="shoppingList" class="primary-button" type="button">Список покупок <span>→</span></button><p class="price-note">Оценка для выбранного города. Цены обновлены сегодня.</p></aside>
+      </section>
+
+      <section class="how" id="how"><div><p class="eyebrow">Как это работает</p><h2>Планируйте без калькулятора<br />и бесконечных списков.</h2></div><ol><li><span>01</span> Укажите город, магазин<br />и сумму закупки</li><li><span>02</span> Выберите ограничения<br />и формат питания</li><li><span>03</span> Получите меню и список<br />продуктов</li></ol></section>
+    </main>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="/app.js"></script>
+  </body>
+</html>
