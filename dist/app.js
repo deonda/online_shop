@@ -20,10 +20,13 @@ let seed = 0;
 const money = n => new Intl.NumberFormat('ru-RU').format(Math.round(n)) + ' ₽';
 function renderMenu(){
   const days = document.getElementById('days'); days.innerHTML = '';
+  const mealsPerDay = Number(document.getElementById('mealCount').value);
+  const mealTypes = mealsPerDay === 2 ? ['breakfast', 'dinner'] : mealsPerDay === 3 ? ['breakfast', 'lunch', 'dinner'] : Object.keys(mealSets);
   week.forEach((info, index) => {
     const day = document.createElement('article'); day.className = 'day' + (index > 4 ? ' weekend' : '');
     day.innerHTML = `<div class="day-title">${info[0]}</div><span class="day-date">${info[1]}</span>`;
-    Object.entries(mealSets).forEach(([type, choices]) => {
+    mealTypes.forEach(type => {
+      const choices = mealSets[type];
       const meal = choices[(index + seed + Object.keys(mealSets).indexOf(type)) % choices.length];
       const button = document.createElement('button'); button.className = 'meal'; button.type = 'button'; button.title = 'Заменить: ' + meal[0];
       button.innerHTML = `<span class="meal-photo" style="--meal-color:${meal[2]}">${meal[1]}</span><span class="meal-name">${meal[0]}</span>`;
@@ -35,16 +38,18 @@ function selectedCount(){return document.querySelectorAll('.chip.selected').leng
 function updateBasket(){
   const budget = Number(document.getElementById('budget').value) || 0;
   const tolerance = Number(document.getElementById('tolerance').value);
+  const mealsPerDay = Number(document.getElementById('mealCount').value);
   const city = document.getElementById('city').value || 'вашего города';
   const filterMultiplier = 1 + Math.max(0, selectedCount() - 1) * .024;
   const storeMultiplier = { 'Пятёрочка':1, 'Магнит':.98, 'Перекрёсток':1.12, 'Чижик':.91, 'Светофор':.86 }[document.getElementById('store').value] || 1;
-  const total = Math.round(6380 * filterMultiplier * storeMultiplier / 10) * 10;
+  const mealMultiplier = { 2: .64, 3: .82, 4: 1 }[mealsPerDay];
+  const total = Math.round(6380 * filterMultiplier * storeMultiplier * mealMultiplier / 10) * 10;
   const allowed = Math.round(budget * (1 + tolerance / 100));
   const diff = allowed - total;
   const list = document.getElementById('basketList'); list.innerHTML = '';
   basketCategories.forEach(([emoji,name,amount]) => { const row = document.createElement('div'); row.className = 'basket-row'; row.innerHTML = `<span class="emoji">${emoji}</span><span>${name}</span><strong>${money(amount * total / 6380)}</strong>`; list.append(row); });
   document.getElementById('totalPrice').textContent = money(total);
-  document.getElementById('itemCounter').textContent = `${24 + selectedCount()} товаров`;
+  document.getElementById('itemCounter').textContent = `${Math.round((24 + selectedCount()) * mealMultiplier)} товаров`;
   const message = document.getElementById('budgetMessage');
   message.classList.toggle('over', diff < 0);
   document.getElementById('heroRemaining').textContent = money(Math.abs(diff));
@@ -60,6 +65,7 @@ document.querySelector('.add-chip').addEventListener('click',()=>showToast('До
 document.getElementById('tolerance').addEventListener('input',updateTolerance);
 document.getElementById('budget').addEventListener('input',updateBasket);
 document.getElementById('store').addEventListener('change',event=>{document.getElementById('storeGlyph').textContent=event.target.value[0];updateBasket();showToast('Корзина пересчитана для сети «' + event.target.value + '»')});
+document.getElementById('mealCount').addEventListener('change', event=>{renderMenu();updateBasket();showToast(`Меню обновлено: ${event.target.value} приёма пищи в день`)});
 document.getElementById('city').addEventListener('change',()=>{updateBasket();showToast('Город сохранён. Проверим доступность сети позже.')});
 document.querySelector('.clear-city').addEventListener('click',()=>{const city=document.getElementById('city');city.value='';city.focus()});
 document.getElementById('editBudget').addEventListener('click',()=>document.getElementById('budget').focus());
